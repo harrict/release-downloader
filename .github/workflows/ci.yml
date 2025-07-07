@@ -64,7 +64,7 @@ jobs:
         run: ls -lrth public-download
 
       - name: Test download latest pre-release
-       uses: ./
+        uses: ./
         with:
           repository: 'robinraju/probable-potato'
           latest: true
