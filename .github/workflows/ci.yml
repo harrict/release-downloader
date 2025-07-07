@@ -78,23 +78,6 @@ jobs:
         shell: bash
         run: ls -lrth prerelease-downloads
 
- #     - name: Test download from a private repo
- #       uses: ./
- #       id: download-private
- #       with:
- #         repository: 'robinraju/release-downloader-test'
- #         latest: true
- #         fileName: '*'
- #         tarBall: true
- #         zipBall: true
- #         extract: true
- #         token: ${{ secrets.RELEASE_DOWNLOADER_TEST_TOKEN }}
- #         out-file-path: './downloader-test'
-
- #     - name: List downloaded files from private repo
- #       shell: bash
- #       run: ls -lrth downloader-test
-
       - name: Read output variable set by previous steps
         shell: bash
         run: |
@@ -102,11 +85,6 @@ jobs:
             echo ${{steps.download-public.outputs.tag_name}}
           else echo "Unable to read output variable from step download-public"; exit 1
           fi
-
- #         if [ -n ${{steps.download-private.outputs.tag_name}} ]; then
- #           echo ${{steps.download-private.outputs.tag_name}}
- #         else echo "Unable to read output variable from step download-private"; exit 1
- #         fi
 
           echo "Downloaded files:"
           echo ${{steps.download-public.outputs.downloaded_files}}
