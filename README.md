@@ -23,6 +23,9 @@ specified files from both private and public repositories.
     # The default value is 'false'
     preRelease: true
 
+    # A tag prefix to download the release from. It should be combined with latest flag.
+    latestPrefix: ''
+
     # The github tag. e.g: v1.0.1
     # Download assets from a specific tag/version
     tag: ''
