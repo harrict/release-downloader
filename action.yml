@@ -1,7 +1,7 @@
-name: 'release-downloader'
+name: 'release-downloaderwithprefix'
 description:
-  'Download release assets from private or public github repositories'
-author: 'Robin Raju'
+  'Download release assets from private or public github repositories (forked version)'
+author: 'Chris Harris'
 inputs:
   repository:
     description: 'The source repository path. Expected format {owner}/{repo}'
