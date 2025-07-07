@@ -18,6 +18,12 @@ inputs:
       flag'
     default: 'false'
     required: false
+  latestPrefix:
+    description: 
+      'A tag prefix to download the release from. It should be combined with
+      latest flag'
+    default: ''
+    required: false
   tag:
     description: 'The github tag to download the release from'
     default: ''

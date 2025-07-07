@@ -35,6 +35,7 @@ export function getInputs(): IReleaseDownloadSettings {
 
   const latestFlag = core.getBooleanInput('latest')
   const preReleaseFlag = core.getBooleanInput('preRelease')
+  const ghLatestPrefix = core.getInput('latestPrefix')
   const ghTag = core.getInput('tag')
   const releaseId = core.getInput('releaseId')
 
@@ -44,6 +45,7 @@ export function getInputs(): IReleaseDownloadSettings {
     sourceRepoPath: repositoryPath,
     isLatest: latestFlag,
     preRelease: preReleaseFlag,
+	latestPrefix: ghLatestPrefix,
     tag: ghTag,
     id: releaseId,
     fileName: core.getInput('fileName'),

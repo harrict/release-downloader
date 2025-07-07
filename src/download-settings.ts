@@ -15,6 +15,11 @@ export interface IReleaseDownloadSettings {
   preRelease: boolean
 
   /**
+   * The release tag prefix
+   */
+  latestPrefix: string
+
+  /**
    * The release tag
    */
   tag: string

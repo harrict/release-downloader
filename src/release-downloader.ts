@@ -28,7 +28,8 @@ export class ReleaseDownloader {
     if (downloadSettings.isLatest) {
       ghRelease = await this.getlatestRelease(
         downloadSettings.sourceRepoPath,
-        downloadSettings.preRelease
+        downloadSettings.preRelease,
+		downloadSettings.latestPrefix
       )
     } else if (downloadSettings.tag !== '') {
       ghRelease = await this.getReleaseByTag(
@@ -70,14 +71,15 @@ export class ReleaseDownloader {
    */
   private async getlatestRelease(
     repoPath: string,
-    preRelease: boolean
+    preRelease: boolean,
+	latestPrefix: string
   ): Promise<GithubRelease> {
     core.info(`Fetching latest release for repo ${repoPath}`)
 
     const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
     let response: IHttpClientResponse
 
-    if (!preRelease) {
+    if (!preRelease && (latestPrefix === undefined || latestPrefix.trim() === "")) {
       response = await this.httpClient.get(
         `${this.apiRoot}/repos/${repoPath}/releases/latest`,
         headers
@@ -99,20 +101,21 @@ export class ReleaseDownloader {
     const responseBody = await response.readBody()
 
     let release: GithubRelease
-    if (!preRelease) {
+    if (!preRelease && (latestPrefix === undefined || latestPrefix.trim() === "")) {
       release = JSON.parse(responseBody.toString())
       core.info(`Found latest release version: ${release.tag_name}`)
     } else {
       const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
-      const latestPreRelease: GithubRelease | undefined = allReleases.find(
-        r => r.prerelease === true
+      const latestRelease: GithubRelease | undefined = allReleases.find(
+        r => r.prerelease === preRelease && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
       )
 
-      if (latestPreRelease) {
-        release = latestPreRelease
-        core.info(`Found latest pre-release version: ${release.tag_name}`)
+      if (latestRelease) {
+        release = latestRelease
+        core.info(`Found latest release version: ${release.tag_name}`)
       } else {
-        throw new Error('No prereleases found!')
+        core.info(`No matching releases found`)
+        throw new Error('No releases found!')
       }
     }
 

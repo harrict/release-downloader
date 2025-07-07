@@ -32,6 +32,10 @@ beforeEach(() => {
     .get('/repos/robinraju/probable-potato/releases/68092191')
     .reply(200, readFromFile('1-release-latest.json'))
 
+  nock('https://api.github.com/')
+    .get('/repos/robinraju/probable-potato/releases')
+    .reply(200, readFromFile('4-with-prerelease.json'))
+
   nock('https://api.github.com')
     .get('/repos/robinraju/foo-app/releases/tags/1.0.0')
     .reply(200, readFromFile('3-empty-assets.json'))
@@ -146,6 +150,7 @@ test('Download all files from public repo', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '*',
@@ -158,14 +163,51 @@ test('Download all files from public repo', async () => {
   expect(result.length).toBe(7)
 }, 10000)
 
+test('Download all files from public repo using latest prefix', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+    isLatest: true,
+    preRelease: false,
+	latestPrefix: 'probable',
+    tag: '',
+    id: '',
+    fileName: '*',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = await downloader.download(downloadSettings)
+  expect(result.length).toBe(6)
+}, 10000)
+
 test('Download single file from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'test-1.txt',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = await downloader.download(downloadSettings)
+  expect(result.length).toBe(1)
+}, 10000)
+
+test('Download single file from public repo using latest prefix', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+    isLatest: true,
+    preRelease: false,
+	latestPrefix: 'probable',
+    tag: '',
+    id: '',
+    fileName: 'test-4.txt',
     tarBall: false,
     zipBall: false,
     extractAssets: false,
@@ -180,6 +222,7 @@ test('Fail loudly if given filename is not found in a release', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'missing-file.txt',
@@ -194,11 +237,32 @@ test('Fail loudly if given filename is not found in a release', async () => {
   )
 }, 10000)
 
+test('Fail loudly if given filename is not found in a release using latest prefix', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+    isLatest: true,
+    preRelease: false,
+	latestPrefix: 'probable',
+    tag: '',
+    id: '',
+    fileName: 'test-2.txt',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = downloader.download(downloadSettings)
+  await expect(result).rejects.toThrow(
+    'Asset with name test-2.txt not found!'
+  )
+}, 10000)
+
 test('Fail loudly if release is not identified', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: false,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'missing-file.txt',
@@ -218,6 +282,7 @@ test('Download files with wildcard from public repo', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'test-*.txt',
@@ -235,6 +300,7 @@ test('Download single file with wildcard from public repo', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '3-*.txt',
@@ -252,6 +318,7 @@ test('Download multiple pdf files with wildcard filename', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '*.pdf',
@@ -269,6 +336,7 @@ test('Download a csv file with wildcard filename', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '*.csv',
@@ -288,6 +356,7 @@ test('Download file from Github Enterprise server', async () => {
     sourceRepoPath: 'my-enterprise/test-repo',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'test-1.txt',
@@ -305,6 +374,7 @@ test('Download file from release identified by ID', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: false,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '68092191',
     fileName: 'test-2.txt',
@@ -322,6 +392,7 @@ test('Download all archive files from public repo', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '*.zip',
@@ -361,6 +432,7 @@ test('Fail when a release with no assets are obtained', async () => {
     sourceRepoPath: 'robinraju/foo-app',
     isLatest: false,
     preRelease: false,
+	latestPrefix: '',
     tag: '1.0.0',
     id: '',
     fileName: 'installer.zip',
@@ -380,6 +452,7 @@ test('Download from latest prerelease', async () => {
     sourceRepoPath: 'robinraju/slick-pg',
     isLatest: true,
     preRelease: true,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'pre-release.txt',
@@ -397,6 +470,7 @@ test('Fail when a release with no prerelease is obtained', async () => {
     sourceRepoPath: 'foo/slick-pg',
     isLatest: true,
     preRelease: true,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: 'installer.zip',
@@ -406,7 +480,7 @@ test('Fail when a release with no prerelease is obtained', async () => {
     outFilePath: outputFilePath
   }
   const result = downloader.download(downloadSettings)
-  await expect(result).rejects.toThrow('No prereleases found!')
+  await expect(result).rejects.toThrow('No releases found!')
 }, 10000)
 
 test('Download from a release containing only tarBall & zipBall', async () => {
@@ -414,6 +488,7 @@ test('Download from a release containing only tarBall & zipBall', async () => {
     sourceRepoPath: 'robinraju/tar-zip-ball-only-repo',
     isLatest: true,
     preRelease: false,
+	latestPrefix: '',
     tag: '',
     id: '',
     fileName: '',
