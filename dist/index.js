@@ -33333,7 +33333,7 @@ class ReleaseDownloader {
             core.info(`Fetching latest release in repo ${repoPath}`);
         }
         else {
-            core.info(`Fetching latest release for prefix $(latestPrefix) in repo ${repoPath}`);
+            core.info(`Fetching latest release for prefix ${latestPrefix} in repo ${repoPath}`);
         }
         const headers = { Accept: 'application/vnd.github.v3+json' };
         let response;
