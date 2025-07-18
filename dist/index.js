@@ -33154,6 +33154,7 @@ function getInputs() {
     validateRepositoryPath(repositoryPath);
     const latestFlag = core.getBooleanInput('latest');
     const preReleaseFlag = core.getBooleanInput('preRelease');
+    const ghLatestPrefix = core.getInput('latestPrefix');
     const ghTag = core.getInput('tag');
     const releaseId = core.getInput('releaseId');
     validateReleaseVersion(latestFlag, ghTag, releaseId);
@@ -33161,6 +33162,7 @@ function getInputs() {
         sourceRepoPath: repositoryPath,
         isLatest: latestFlag,
         preRelease: preReleaseFlag,
+        latestPrefix: ghLatestPrefix,
         tag: ghTag,
         id: releaseId,
         fileName: core.getInput('fileName'),
@@ -33303,7 +33305,7 @@ class ReleaseDownloader {
     async download(downloadSettings) {
         let ghRelease;
         if (downloadSettings.isLatest) {
-            ghRelease = await this.getlatestRelease(downloadSettings.sourceRepoPath, downloadSettings.preRelease);
+            ghRelease = await this.getlatestRelease(downloadSettings.sourceRepoPath, downloadSettings.preRelease, downloadSettings.latestPrefix);
         }
         else if (downloadSettings.tag !== '') {
             ghRelease = await this.getReleaseByTag(downloadSettings.sourceRepoPath, downloadSettings.tag);
@@ -33326,11 +33328,16 @@ class ReleaseDownloader {
      * Gets the latest release metadata from github api
      * @param repoPath The source repository path. {owner}/{repo}
      */
-    async getlatestRelease(repoPath, preRelease) {
-        core.info(`Fetching latest release for repo ${repoPath}`);
+    async getlatestRelease(repoPath, preRelease, latestPrefix) {
+        if (latestPrefix === undefined || latestPrefix.trim() === "") {
+            core.info(`Fetching latest release in repo ${repoPath}`);
+        }
+        else {
+            core.info(`Fetching latest release for prefix $(latestPrefix) in repo ${repoPath}`);
+        }
         const headers = { Accept: 'application/vnd.github.v3+json' };
         let response;
-        if (!preRelease) {
+        if (!preRelease && (latestPrefix === undefined || latestPrefix.trim() === "")) {
             response = await this.httpClient.get(`${this.apiRoot}/repos/${repoPath}/releases/latest`, headers);
         }
         else {
@@ -33342,19 +33349,25 @@ class ReleaseDownloader {
         }
         const responseBody = await response.readBody();
         let release;
-        if (!preRelease) {
+        if (!preRelease && (latestPrefix === undefined || latestPrefix.trim() === "")) {
             release = JSON.parse(responseBody.toString());
             core.info(`Found latest release version: ${release.tag_name}`);
         }
         else {
             const allReleases = JSON.parse(responseBody.toString());
-            const latestPreRelease = allReleases.find(r => r.prerelease === true);
-            if (latestPreRelease) {
-                release = latestPreRelease;
-                core.info(`Found latest pre-release version: ${release.tag_name}`);
+            const latestRelease = allReleases.find(r => r.prerelease === preRelease && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix)));
+            if (latestRelease) {
+                release = latestRelease;
+                if (preRelease) {
+                    core.info(`Found latest prerelease version: ${release.tag_name}`);
+                }
+                else {
+                    core.info(`Found latest release by prefix version: ${release.tag_name}`);
+                }
             }
             else {
-                throw new Error('No prereleases found!');
+                core.info(`No matching releases found`);
+                throw new Error('No releases found!');
             }
         }
         return release;
