@@ -112,7 +112,11 @@ export class ReleaseDownloader {
 
       if (latestRelease) {
         release = latestRelease
-        core.info(`Found latest release version: ${release.tag_name}`)
+		if (preRelease) {
+			core.info(`Found latest prerelease version: ${release.tag_name}`)
+		} else {
+			core.info(`Found latest release by prefix version: ${release.tag_name}`)
+		}
       } else {
         core.info(`No matching releases found`)
         throw new Error('No releases found!')

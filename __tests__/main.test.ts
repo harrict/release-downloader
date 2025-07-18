@@ -168,7 +168,7 @@ test('Download all files from public repo using latest prefix', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
     isLatest: true,
     preRelease: false,
-	latestPrefix: 'probable',
+	latestPrefix: 'prob',
     tag: '',
     id: '',
     fileName: '*',
@@ -178,7 +178,7 @@ test('Download all files from public repo using latest prefix', async () => {
     outFilePath: outputFilePath
   }
   const result = await downloader.download(downloadSettings)
-  expect(result.length).toBe(6)
+  expect(result.length).toBe(5)
 }, 10000)
 
 test('Download single file from public repo', async () => {
