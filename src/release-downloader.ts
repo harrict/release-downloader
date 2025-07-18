@@ -74,7 +74,11 @@ export class ReleaseDownloader {
     preRelease: boolean,
 	latestPrefix: string
   ): Promise<GithubRelease> {
-    core.info(`Fetching latest release for repo ${repoPath}`)
+	if (latestPrefix === undefined || latestPrefix.trim() === "") {
+	  core.info(`Fetching latest release in repo ${repoPath}`)
+	} else {
+	  core.info(`Fetching latest release for prefix $(latestPrefix) in repo ${repoPath}`)
+	}
 
     const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
     let response: IHttpClientResponse
