@@ -33,6 +33,7 @@ export function getInputs(): IReleaseDownloadSettings {
   const repositoryPath = core.getInput('repository')
   validateRepositoryPath(repositoryPath)
 
+  const branch = core.getInput('branch')
   const latestFlag = core.getBooleanInput('latest')
   const preReleaseFlag = core.getBooleanInput('preRelease')
   const ghLatestPrefix = core.getInput('latestPrefix')
@@ -43,6 +44,7 @@ export function getInputs(): IReleaseDownloadSettings {
 
   return {
     sourceRepoPath: repositoryPath,
+	branchName: branch,
     isLatest: latestFlag,
     preRelease: preReleaseFlag,
 	latestPrefix: ghLatestPrefix,

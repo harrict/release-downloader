@@ -7,6 +7,10 @@ inputs:
     description: 'The source repository path. Expected format {owner}/{repo}'
     default: ${{ github.repository }}
     required: false
+  branch:
+    description: 'The source branch. Will be used in fetching latest release'
+    default: ${{ github.ref_name }}
+    required: false
   latest:
     description:
       'A flag to choose between latest release and remaining releases'

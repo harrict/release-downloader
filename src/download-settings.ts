@@ -3,6 +3,11 @@ export interface IReleaseDownloadSettings {
    * The source repository path. Expected format {owner}/{repo}
    */
   sourceRepoPath: string
+  
+  /**
+   * The source branch. Used when getting latest
+   */
+  branchName: string
 
   /**
    * A flag to choose between latest release and remaining releases
