@@ -95,13 +95,15 @@ export class ReleaseDownloader {
     }
 
     const responseBody = await response.readBody()
+	
+	let release: GithubRelease
     const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
     const latestRelease: GithubRelease | undefined = allReleases.find(
       r => r.prerelease === preRelease && r.tag_name.includes(`.${branch}.`) && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
     )
 
     if (latestRelease) {
-      const release: GithubRelease = latestRelease
+      release = latestRelease
       if (preRelease) {
         core.info(`Found latest prerelease version: ${release.tag_name}`)
 	  } else {
