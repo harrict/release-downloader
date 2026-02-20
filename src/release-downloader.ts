@@ -28,6 +28,7 @@ export class ReleaseDownloader {
     if (downloadSettings.isLatest) {
       ghRelease = await this.getlatestRelease(
         downloadSettings.sourceRepoPath,
+		downloadSettings.filterByBranch,
         downloadSettings.branchName,
         downloadSettings.preRelease,
 		downloadSettings.latestPrefix
@@ -72,21 +73,41 @@ export class ReleaseDownloader {
    */
   private async getlatestRelease(
     repoPath: string,
+	filterByBranch boolean,
 	branch: string,
     preRelease: boolean,
 	latestPrefix: string
   ): Promise<GithubRelease> {
-	if (latestPrefix === undefined || latestPrefix.trim() === "") {
-	  core.info(`Fetching latest release in repo ${repoPath} for branch ${branch}`)
-	} else {
-	  core.info(`Fetching latest release for prefix ${latestPrefix} in repo ${repoPath} for branch ${branch}`)
+	  
+	let msg: string
+	if (preRelease) {
+	  msg = `Fetching latest prerelease in repo ${repoPath}`
 	}
-
+	else {
+	  msg = `Fetching latest release in repo ${repoPath}`
+	}
+	if (latestPrefix !== undefined && latestPrefix.trim() !== "") {
+	  msg = `${msg} with tag prefix ${latestPrefix}`
+	} 
+	if (filterByBranch){
+	  msg = `${msg} for tag branch ${branch}`
+	}
+	core.info(msg)
+    
     const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
-    const response: IHttpClientResponse = await this.httpClient.get(
-      `${this.apiRoot}/repos/${repoPath}/releases`,
-      headers
-    )
+    let response: IHttpClientResponse
+
+    if (!preRelease && !filterByBranch && (latestPrefix === undefined || latestPrefix.trim() === "")) {
+      response = await this.httpClient.get(
+        `${this.apiRoot}/repos/${repoPath}/releases/latest`,
+        headers
+      )
+    } else {
+      response = await this.httpClient.get(
+        `${this.apiRoot}/repos/${repoPath}/releases`,
+        headers
+      )
+    }
 
     if (response.message.statusCode !== 200) {
       const err: Error = new Error(
@@ -96,23 +117,28 @@ export class ReleaseDownloader {
     }
 
     const responseBody = await response.readBody()
-	
-	let release: GithubRelease
-    const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
-    const latestRelease: GithubRelease | undefined = allReleases.find(
-      r => r.prerelease === preRelease && r.tag_name.includes(`.${branch}.`) && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
-    )
 
-    if (latestRelease) {
-      release = latestRelease
-      if (preRelease) {
-        core.info(`Found latest prerelease version: ${release.tag_name}`)
-	  } else {
-	    core.info(`Found latest release by prefix version: ${release.tag_name}`)
-	  }
+    let release: GithubRelease
+    if (!preRelease && !filterByBranch && (latestPrefix === undefined || latestPrefix.trim() === "")) {
+      release = JSON.parse(responseBody.toString())
+      core.info(`Found latest release version: ${release.tag_name}`)
     } else {
-      core.info(`No matching releases found`)
-      throw new Error('No releases found!')
+      const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
+      const latestRelease: GithubRelease | undefined = allReleases.find(
+        r => r.prerelease === preRelease && (filterByBranch === false || (filterByBranch === true && r.tag_name.includes(`.${branch}.`))) && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
+      )
+
+      if (latestRelease) {
+        release = latestRelease
+		if (preRelease) {
+			core.info(`Found latest prerelease version: ${release.tag_name}`)
+		} else {
+			core.info(`Found latest release version: ${release.tag_name}`)
+		}
+      } else {
+        core.info(`No matching releases found`)
+        throw new Error('No releases found!')
+      }
     }
 
     return release

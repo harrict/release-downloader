@@ -8,12 +8,18 @@ inputs:
     default: ${{ github.repository }}
     required: false
   branch:
-    description: 'The source branch. Will be used in fetching latest release'
+    description: 'The source branch. Will be used in filtering for latest release'
     default: ${{ github.ref_name }}
     required: false
   latest:
     description:
       'A flag to choose between latest release and remaining releases'
+    default: 'false'
+    required: false
+  latestByBranch:
+    description:
+      'A flag to use branch name filtering when getting latest. It should be combined with latest
+      flag'
     default: 'false'
     required: false
   preRelease:
@@ -24,7 +30,7 @@ inputs:
     required: false
   latestPrefix:
     description: 
-      'A tag prefix to download the release from. It should be combined with
+      'A tag prefix to filter releases when getting latest. It should be combined with
       latest flag'
     default: ''
     required: false

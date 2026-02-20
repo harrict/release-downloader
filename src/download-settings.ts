@@ -13,6 +13,11 @@ export interface IReleaseDownloadSettings {
    * A flag to choose between latest release and remaining releases
    */
   isLatest: boolean
+  
+  /**
+   * A flag to enable whether to filter by branch name
+   */
+  filterByBranch: boolean
 
   /**
    * A flag to enable downloading from prerelease

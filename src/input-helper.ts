@@ -35,6 +35,7 @@ export function getInputs(): IReleaseDownloadSettings {
 
   const branch = core.getInput('branch')
   const latestFlag = core.getBooleanInput('latest')
+  const latestByBranchFlag = core.getBooleanInput('latestByBranch')
   const preReleaseFlag = core.getBooleanInput('preRelease')
   const ghLatestPrefix = core.getInput('latestPrefix')
   const ghTag = core.getInput('tag')
@@ -46,6 +47,7 @@ export function getInputs(): IReleaseDownloadSettings {
     sourceRepoPath: repositoryPath,
 	branchName: branch,
     isLatest: latestFlag,
+	filterByBranch: latestByBranchFlag,
     preRelease: preReleaseFlag,
 	latestPrefix: ghLatestPrefix,
     tag: ghTag,
