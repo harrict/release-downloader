@@ -15,9 +15,17 @@ specified files from both private and public repositories.
     # Default: ${{ github.repository }}
     repository: ''
 
+    # The source branch. Will be used in filtering for latest release when lastestByBranch is true.
+    # Default: ${{ github.ref_name }}
+    branch: ''
+
     # A flag to set the download target as latest release
     # The default value is 'false'
     latest: true
+
+    # A flag to use branch name filtering when getting latest. It should be combined with latest flag.
+    # The default value is 'false'
+    latestByBranch: false
 
     # A flag to download from prerelease. It should be combined with latest flag.
     # The default value is 'false'
