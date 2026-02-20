@@ -82,9 +82,7 @@ export class ReleaseDownloader {
 	}
 
     const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
-    const response: IHttpClientResponse
-
-    response = await this.httpClient.get(
+    const response: IHttpClientResponse = await this.httpClient.get(
       `${this.apiRoot}/repos/${repoPath}/releases`,
       headers
     )
@@ -97,15 +95,13 @@ export class ReleaseDownloader {
     }
 
     const responseBody = await response.readBody()
-
-    const release: GithubRelease
     const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
     const latestRelease: GithubRelease | undefined = allReleases.find(
       r => r.prerelease === preRelease && r.tag_name.includes(`.${branch}.`) && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
     )
 
     if (latestRelease) {
-      release = latestRelease
+      const release: GithubRelease = latestRelease
       if (preRelease) {
         core.info(`Found latest prerelease version: ${release.tag_name}`)
 	  } else {
