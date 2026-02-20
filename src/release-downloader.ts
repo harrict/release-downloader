@@ -28,6 +28,7 @@ export class ReleaseDownloader {
     if (downloadSettings.isLatest) {
       ghRelease = await this.getlatestRelease(
         downloadSettings.sourceRepoPath,
+        downloadSettings.branchName,
         downloadSettings.preRelease,
 		downloadSettings.latestPrefix
       )
