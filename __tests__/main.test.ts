@@ -148,6 +148,7 @@ function normalizeLineEndings(str: string): string {
 test('Download all files from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -166,6 +167,7 @@ test('Download all files from public repo', async () => {
 test('Download all files from public repo using latest prefix', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: 'prob',
@@ -184,6 +186,7 @@ test('Download all files from public repo using latest prefix', async () => {
 test('Download single file from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -202,6 +205,7 @@ test('Download single file from public repo', async () => {
 test('Download single file from public repo using latest prefix', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: 'probable',
@@ -220,6 +224,7 @@ test('Download single file from public repo using latest prefix', async () => {
 test('Fail loudly if given filename is not found in a release', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -240,6 +245,7 @@ test('Fail loudly if given filename is not found in a release', async () => {
 test('Fail loudly if given filename is not found in a release using latest prefix', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: 'probable',
@@ -260,6 +266,7 @@ test('Fail loudly if given filename is not found in a release using latest prefi
 test('Fail loudly if release is not identified', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: false,
     preRelease: false,
 	latestPrefix: '',
@@ -280,6 +287,7 @@ test('Fail loudly if release is not identified', async () => {
 test('Download files with wildcard from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -298,6 +306,7 @@ test('Download files with wildcard from public repo', async () => {
 test('Download single file with wildcard from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -316,6 +325,7 @@ test('Download single file with wildcard from public repo', async () => {
 test('Download multiple pdf files with wildcard filename', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -334,6 +344,7 @@ test('Download multiple pdf files with wildcard filename', async () => {
 test('Download a csv file with wildcard filename', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -354,6 +365,7 @@ test('Download file from Github Enterprise server', async () => {
 
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'my-enterprise/test-repo',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -372,6 +384,7 @@ test('Download file from Github Enterprise server', async () => {
 test('Download file from release identified by ID', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: false,
     preRelease: false,
 	latestPrefix: '',
@@ -390,6 +403,7 @@ test('Download file from release identified by ID', async () => {
 test('Download all archive files from public repo', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
@@ -430,6 +444,7 @@ test('Download all archive files from public repo', async () => {
 test('Fail when a release with no assets are obtained', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/foo-app',
+	branchName: 'main',
     isLatest: false,
     preRelease: false,
 	latestPrefix: '',
@@ -450,6 +465,7 @@ test('Fail when a release with no assets are obtained', async () => {
 test('Download from latest prerelease', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/slick-pg',
+	branchName: 'main',
     isLatest: true,
     preRelease: true,
 	latestPrefix: '',
@@ -468,6 +484,7 @@ test('Download from latest prerelease', async () => {
 test('Fail when a release with no prerelease is obtained', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'foo/slick-pg',
+	branchName: 'main',
     isLatest: true,
     preRelease: true,
 	latestPrefix: '',
@@ -486,6 +503,7 @@ test('Fail when a release with no prerelease is obtained', async () => {
 test('Download from a release containing only tarBall & zipBall', async () => {
   const downloadSettings: IReleaseDownloadSettings = {
     sourceRepoPath: 'robinraju/tar-zip-ball-only-repo',
+	branchName: 'main',
     isLatest: true,
     preRelease: false,
 	latestPrefix: '',
