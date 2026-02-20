@@ -170,6 +170,26 @@ test('Download all files from public repo using latest prefix', async () => {
     sourceRepoPath: 'robinraju/probable-potato',
 	branchName: 'main',
     isLatest: true,
+	filterByBranch: false,
+    preRelease: false,
+	latestPrefix: 'prob',
+    tag: '',
+    id: '',
+    fileName: '*',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = await downloader.download(downloadSettings)
+  expect(result.length).toBe(7)
+}, 10000)
+
+test('Download all files from public repo using latest prefix and branch name', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
+    isLatest: true,
 	filterByBranch: true,
     preRelease: false,
 	latestPrefix: 'prob',
@@ -215,6 +235,26 @@ test('Download single file from public repo using latest prefix', async () => {
 	latestPrefix: 'probable',
     tag: '',
     id: '',
+    fileName: 'test-2.txt',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = await downloader.download(downloadSettings)
+  expect(result.length).toBe(1)
+}, 10000)
+
+test('Download single file from public repo using latest prefix and branch name', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
+    isLatest: true,
+	filterByBranch: true,
+    preRelease: false,
+	latestPrefix: 'probable',
+    tag: '',
+    id: '',
     fileName: 'test-4.txt',
     tarBall: false,
     zipBall: false,
@@ -253,6 +293,28 @@ test('Fail loudly if given filename is not found in a release using latest prefi
 	branchName: 'main',
     isLatest: true,
 	filterByBranch: false,
+    preRelease: false,
+	latestPrefix: 'probable',
+    tag: '',
+    id: '',
+    fileName: 'test-4.txt',
+    tarBall: false,
+    zipBall: false,
+    extractAssets: false,
+    outFilePath: outputFilePath
+  }
+  const result = downloader.download(downloadSettings)
+  await expect(result).rejects.toThrow(
+    'Asset with name test-4.txt not found!'
+  )
+}, 10000)
+
+test('Fail loudly if given filename is not found in a release using latest prefix and branch name', async () => {
+  const downloadSettings: IReleaseDownloadSettings = {
+    sourceRepoPath: 'robinraju/probable-potato',
+	branchName: 'main',
+    isLatest: true,
+	filterByBranch: true,
     preRelease: false,
 	latestPrefix: 'probable',
     tag: '',
