@@ -73,7 +73,7 @@ export class ReleaseDownloader {
    */
   private async getlatestRelease(
     repoPath: string,
-	filterByBranch boolean,
+	filterByBranch: boolean,
 	branch: string,
     preRelease: boolean,
 	latestPrefix: string
