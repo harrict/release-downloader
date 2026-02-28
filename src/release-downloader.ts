@@ -96,34 +96,28 @@ export class ReleaseDownloader {
     
     const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
     let response: IHttpClientResponse
+    let release: GithubRelease
 
     if (!preRelease && !filterByBranch && (latestPrefix === undefined || latestPrefix.trim() === "")) {
       response = await this.httpClient.get(
         `${this.apiRoot}/repos/${repoPath}/releases/latest`,
         headers
       )
-    } else {
-      response = await this.httpClient.get(
-        `${this.apiRoot}/repos/${repoPath}/releases`,
-        headers
-      )
-    }
 
-    if (response.message.statusCode !== 200) {
-      const err: Error = new Error(
-        `[getlatestRelease] Unexpected response: ${response.message.statusCode}`
-      )
-      throw err
-    }
-
-    const responseBody = await response.readBody()
-
-    let release: GithubRelease
-    if (!preRelease && !filterByBranch && (latestPrefix === undefined || latestPrefix.trim() === "")) {
+      if (response.message.statusCode !== 200) {
+        const err: Error = new Error(
+          `[getlatestRelease] Unexpected response: ${response.message.statusCode}`
+        )
+        throw err
+      }
+	  
+      const responseBody = await response.readBody()
       release = JSON.parse(responseBody.toString())
       core.info(`Found latest release version: ${release.tag_name}`)
+	  
+	  return release
     } else {
-      const allReleases: GithubRelease[] = JSON.parse(responseBody.toString())
+      const allReleases = await this.fetchAllReleases(repoPath)
       const latestRelease: GithubRelease | undefined = allReleases.find(
         r => r.prerelease === preRelease && (filterByBranch === false || (filterByBranch === true && r.tag_name.includes(`.${branch}.`))) && ((latestPrefix === undefined || latestPrefix.trim() === "") || r.tag_name.startsWith(latestPrefix))
       )
@@ -139,9 +133,50 @@ export class ReleaseDownloader {
         core.info(`No matching releases found`)
         throw new Error('No releases found!')
       }
+	  
+      return release
     }
+  }
+  
+  private async fetchAllReleases(repoPath: string): Promise<GithubRelease[]> {
+	let allReleases: GithubRelease[] = [];
+	let page = 1;
+	let hasMorePages = true;
+	const perPage = 100; // Max allowed by GitHub API
 
-    return release
+	while (hasMorePages) {
+      const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
+	  try {
+	    const response = await this.httpClient.get(
+	  	  `${this.apiRoot}/repos/${repoPath}/releases`,
+		  headers
+		)
+
+		if (response.message.statusCode !== 200) {
+		  const err: Error = new Error(
+		    `[fetchAllReleases] Unexpected response: ${response.message.statusCode}`
+		  )
+		  throw err
+		}
+
+        const responseBody = await response.readBody()
+		const releases: GithubRelease[] = JSON.parse(responseBody.toString())
+		allReleases = allReleases.concat(releases);
+
+		  // If the response array is empty, it means we have reached the last page
+		if (releases.length < perPage) {
+		  hasMorePages = false;
+		} else {
+		  page++;
+		}
+	  } catch (error) {
+	    core.info(`Error fetching releases page ${page}: ${error}`);
+		  // Stop fetching if an error occurs
+	    hasMorePages = false;
+	  }
+	}
+
+	return allReleases;
   }
 
   /**
