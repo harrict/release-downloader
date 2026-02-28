@@ -33385,10 +33385,11 @@ class ReleaseDownloader {
         let page = 1;
         let hasMorePages = true;
         const perPage = 100; // Max allowed by GitHub API
+        core.info("Fetching all releases using pagination");
         while (hasMorePages) {
             const headers = { Accept: 'application/vnd.github.v3+json' };
             try {
-                const response = await this.httpClient.get(`${this.apiRoot}/repos/${repoPath}/releases`, headers);
+                const response = await this.httpClient.get(`${this.apiRoot}/repos/${repoPath}/releases?per_page=${perPage}&page=${page}`, headers);
                 if (response.message.statusCode !== 200) {
                     const err = new Error(`[fetchAllReleases] Unexpected response: ${response.message.statusCode}`);
                     throw err;
@@ -33410,6 +33411,7 @@ class ReleaseDownloader {
                 hasMorePages = false;
             }
         }
+        core.info(`Found ${allReleases.length} total releases`);
         return allReleases;
     }
     /**

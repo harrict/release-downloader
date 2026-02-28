@@ -33,7 +33,7 @@ beforeEach(() => {
     .reply(200, readFromFile('1-release-latest.json'))
 
   nock('https://api.github.com/')
-    .get('/repos/robinraju/probable-potato/releases')
+    .get('/repos/robinraju/probable-potato/releases?per_page=100&page=1')
     .reply(200, readFromFile('4-with-prerelease.json'))
 
   nock('https://api.github.com')
@@ -93,7 +93,7 @@ beforeEach(() => {
     .replyWithFile(200, `${__dirname}/resource/assets/test-1.txt`)
 
   nock('https://api.github.com/')
-    .get('/repos/robinraju/slick-pg/releases')
+    .get('/repos/robinraju/slick-pg/releases?per_page=100&page=1')
     .reply(200, readFromFile('4-with-prerelease.json'))
 
   nock('https://api.github.com', {
@@ -103,7 +103,7 @@ beforeEach(() => {
     .replyWithFile(200, `${__dirname}/resource/assets/pre-release.txt`)
 
   nock('https://api.github.com/')
-    .get('/repos/foo/slick-pg/releases')
+    .get('/repos/foo/slick-pg/releases?per_page=100&page=1')
     .reply(200, readFromFile('5-without-prerelease.json'))
 
   nock('https://api.github.com')

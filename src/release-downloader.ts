@@ -144,11 +144,12 @@ export class ReleaseDownloader {
 	let hasMorePages = true;
 	const perPage = 100; // Max allowed by GitHub API
 
+	core.info("Fetching all releases using pagination");
 	while (hasMorePages) {
       const headers: IHeaders = { Accept: 'application/vnd.github.v3+json' }
 	  try {
 	    const response = await this.httpClient.get(
-	  	  `${this.apiRoot}/repos/${repoPath}/releases`,
+	  	  `${this.apiRoot}/repos/${repoPath}/releases?per_page=${perPage}&page=${page}`,
 		  headers
 		)
 
@@ -176,6 +177,7 @@ export class ReleaseDownloader {
 	  }
 	}
 
+	core.info(`Found ${allReleases.length} total releases`);
 	return allReleases;
   }
 
